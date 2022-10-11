@@ -139,7 +139,10 @@ long copyLSB(long x) {
  *   Rating: 2
  */
 long allOddBits(long x) {
-    long mask = 0xAAAAAAAAAAAAAAAA;
+    long mask = 0xAA;
+    mask = mask | (mask << 8);
+    mask = mask | (mask << 16);
+    mask = mask | (mask << 32);
     return !((x & mask) ^ mask);
 }
 /*
@@ -161,7 +164,7 @@ long isNotEqual(long x, long y) {
  *   Rating: 2
  */
 long dividePower2(long x, long n) {
-    long mask1 = -1;
+    long mask1 = ~0;
     long mask2 = 1;
     return (x + ((x >> 63) & ((mask2 << n) + mask1))) >> n;
 }
@@ -237,27 +240,19 @@ long isPower2(long x) {
  *   Rating: 4
  */
 long allAsciiDigits(long x) {
-    long mask1 = 0xf0;
-    mask1 = mask1 | (mask1 << 8);
-    mask1 = mask1 | (mask1 << 16);
-    mask1 = mask1 | (mask1 << 32);
+    long mask0 = 0x10;
+    mask0 = mask0 | (mask0 << 8);
+    mask0 = mask0 | (mask0 << 16);
+    mask0 = mask0 | (mask0 << 32);
+    long mask1 = mask0 | (mask0 << 1) | (mask0 << 2) | (mask0 << 3);
     long res = 0;
-    long mask2 = 0x30;
-    mask2 = mask2 | (mask2 << 8);
-    mask2 = mask2 | (mask2 << 16);
-    mask2 = mask2 | (mask2 << 32);
-    
+    long mask2 = mask0 | (mask0 << 1);
+
     res |= (x & mask1) ^ mask2;
 
-    long mask3 = 0x08;
-    mask3 = mask3 | (mask3 << 8);
-    mask3 = mask3 | (mask3 << 16);
-    mask3 = mask3 | (mask3 << 32);
+    long mask3 = mask0 >> 1;
     long tmp = mask3 & x;
-    long mask4 = 0x06;
-    mask4 = mask4 | (mask4 << 8);
-    mask4 = mask4 | (mask4 << 16);
-    mask4 = mask4 | (mask4 << 32);
+    long mask4 = (mask3 >> 1) | (mask3 >> 2);
     res |= ((tmp >> 1) | (tmp >> 2)) & (x & mask4);
     return !res;
 }
